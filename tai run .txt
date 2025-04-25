@@ -1,0 +1,91 @@
+import random
+import time
+import os  # For clearing the screen (works in most Codecademy workspaces)
+
+# Game setup
+track_width = 20
+car_position = track_width // 2
+obstacles = []
+score = 0
+game_speed = 0.3
+
+def draw_track():
+    """Draw the racing track with car and obstacles"""
+    os.system('cls' if os.name == 'nt' else 'clear')  # Clear screen
+    
+    # Draw top border
+    print("=" * track_width)
+    
+    # Draw empty track lines
+    for i in range(5):
+        print(" " * track_width)
+    
+    # Draw car
+    track_line = [" "] * track_width
+    track_line[car_position] = "🏎️"
+    print("".join(track_line))
+    
+    # Draw obstacles
+    for obstacle in obstacles:
+        track_line = [" "] * track_width
+        track_line[obstacle] = "💣"
+        print("".join(track_line))
+    
+    # Draw bottom border and score
+    print("=" * track_width)
+    print(f"Score: {score} | Use A/D to move | Q to quit")
+
+def main():
+    global car_position, score, game_speed
+    
+    print("🚗 SPEED RACER - TEXT EDITION 🚗")
+    print("-------------------------------")
+    print("Avoid bombs (💣) and stay on track!")
+    print("Controls: A (left), D (right), Q (quit)")
+    time.sleep(2)
+    
+    try:
+        while True:
+            # Generate obstacles
+            if random.random() < 0.3:
+                obstacles.append(random.randint(0, track_width-1))
+            
+            # Move obstacles down
+            for i in range(len(obstacles)-1, -1, -1):
+                if i < 4:  # Only draw obstacles in the visible track
+                    continue
+                obstacles.pop(i)
+            
+            # Draw game state
+            draw_track()
+            
+            # Handle input
+            key = input().lower()
+            if key == 'a' and car_position > 0:
+                car_position -= 1
+            elif key == 'd' and car_position < track_width-1:
+                car_position += 1
+            elif key == 'q':
+                print(f"Game Over! Final Score: {score}")
+                break
+            
+            # Collision detection
+            if car_position in obstacles:
+                print("💥 CRASH! Game Over 💥")
+                print(f"Final Score: {score}")
+                break
+            
+            score += 1
+            time.sleep(game_speed)
+            
+            # Increase difficulty
+            if score % 20 == 0:
+                game_speed *= 0.9
+    
+    except KeyboardInterrupt:
+        print(f"\nGame Over! Final Score: {score}")
+
+if __name__ == "__main__":
+    main()
+    print("ent race 🏎")
+    print("allow curses library work with code academy")
